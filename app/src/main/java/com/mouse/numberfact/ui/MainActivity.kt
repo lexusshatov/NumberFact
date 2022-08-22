@@ -1,4 +1,4 @@
-package com.mouse.numberfact
+package com.mouse.numberfact.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

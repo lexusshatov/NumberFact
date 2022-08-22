@@ -1,4 +1,4 @@
-package com.mouse.numberfact
+package com.mouse.numberfact.ui
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,20 +9,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.mouse.numberfact.domain.State
 
 @Composable
-fun FactButton(
+fun <T : Any> FactButton(
     modifier: Modifier = Modifier,
+    state: State<T> = State.Idle,
     onClick: () -> Unit,
-    isLoading: Boolean = false,
     content: @Composable (RowScope.() -> Unit),
 ) {
     Button(
         modifier = modifier.fillMaxWidth(),
         onClick = onClick,
-        enabled = !isLoading
+        enabled = state !is State.Loading
     ) {
-        if (isLoading) {
+        if (state is State.Loading) {
             CircularProgressIndicator(
                 modifier = Modifier.size(20.dp),
                 color = Color.White,

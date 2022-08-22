@@ -2,22 +2,28 @@ package com.mouse.numberfact
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mouse.numberfact.domain.GetNumberFactInteraction
+import com.mouse.numberfact.domain.NumberApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel() {
+class MainViewModel(
+    private val numberApi: NumberApi = NumberFactApp.instance.numberApi,
+) : ViewModel() {
 
-    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
+    val getNumberFact = GetNumberFactInteraction(scope = viewModelScope)
 
-    fun load() {
+    private val _isLoadingRandomNumber: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isLoadingRandomNumber: StateFlow<Boolean> = _isLoadingRandomNumber
+
+    fun loadRandomNumber() {
         viewModelScope.launch(Dispatchers.IO) {
-            _isLoading.value = true
-            delay(3000)
-            _isLoading.value = false
+            _isLoadingRandomNumber.value = true
+            val result = numberApi.getRandomNumber()
+            println(result)
+            _isLoadingRandomNumber.value = false
         }
     }
 }
