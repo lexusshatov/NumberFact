@@ -1,6 +1,8 @@
 package com.mouse.numberfact
 
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
@@ -16,13 +18,15 @@ fun FactButton(
     content: @Composable (RowScope.() -> Unit),
 ) {
     Button(
-        modifier = modifier,
-        onClick = onClick
+        modifier = modifier.fillMaxWidth(),
+        onClick = onClick,
+        enabled = !isLoading
     ) {
         if (isLoading) {
             CircularProgressIndicator(
+                modifier = Modifier.size(20.dp),
                 color = Color.White,
-                strokeWidth = 3.dp
+                strokeWidth = 2.dp
             )
         } else content(this)
     }

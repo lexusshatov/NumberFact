@@ -13,13 +13,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.delay
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun MainScreen() {
+    val mainViewModel: MainViewModel = viewModel()
     var text by remember { mutableStateOf("") }
-    var isLoading by remember { mutableStateOf(true) }
+    val isLoading by mainViewModel.isLoading.collectAsState()
 
     Column(
         modifier = Modifier
@@ -35,21 +37,25 @@ fun MainScreen() {
             },
             label = { Text(text = "Enter number") },
             textStyle = TextStyle.Default.copy(color = Color.White),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword,
                 imeAction = ImeAction.Search),
-            keyboardActions = KeyboardActions(onSearch = { println("SEARCH") })
+            keyboardActions = KeyboardActions(onSearch = { mainViewModel.load() })
         )
 
         Spacer(modifier = Modifier.size(10.dp))
 
         FactButton(
-            onClick = { /*TODO*/ },
+            modifier = Modifier.padding(horizontal = 60.dp),
+            onClick = { mainViewModel.load() },
             isLoading = isLoading
         ) {
-            Text(text = "Get fact")
+            Text(text = "Get fact", textAlign = TextAlign.Center)
         }
-        FactButton(onClick = { /*TODO*/ }) {
-            Text(text = "Get fact about random number")
+        FactButton(
+            modifier = Modifier.padding(horizontal = 60.dp),
+            onClick = { /*TODO*/ }
+        ) {
+            Text(text = "Get fact about random number", textAlign = TextAlign.Center)
         }
 
         Spacer(modifier = Modifier.size(20.dp))
@@ -58,11 +64,6 @@ fun MainScreen() {
             items(100) {
                 FactPreview(text = (0..100).random().toString())
             }
-        }
-
-        LaunchedEffect(key1 = "Test") {
-            delay(3000)
-            isLoading = false
         }
     }
 }
