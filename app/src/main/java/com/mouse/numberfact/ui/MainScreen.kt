@@ -8,6 +8,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -36,10 +37,7 @@ fun MainScreen(
 
     val numberFactFlow by mainViewModel.getNumberFact
     val randomFactFlow by mainViewModel.getRandomFact
-
-    val list = generateSequence {
-        NumberFact("${(-10000..10000).random()} is some fact about this number with long description")
-    }.take(100).toList()
+    val factHistory by mainViewModel.factHistory.observeAsState(initial = emptyList())
 
     Column(
         modifier = Modifier
@@ -89,9 +87,9 @@ fun MainScreen(
         Spacer(modifier = Modifier.size(10.dp))
 
         LazyColumn {
-            itemsIndexed(list) { index, fact ->
+            itemsIndexed(factHistory) { index, fact ->
                 FactPreview(fact, onNavigateToDetail)
-                if (index < list.lastIndex) {
+                if (index < factHistory.lastIndex) {
                     Spacer(modifier = Modifier.size(3.dp))
                     Divider()
                 }
