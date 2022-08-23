@@ -4,9 +4,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -27,9 +27,9 @@ fun MainScreen(
     onNavigateToDetail: (String) -> Unit = {},
 ) {
     val mainViewModel: MainViewModel = viewModel()
-    var inputNumber by remember { mutableStateOf("") }
-    var error by remember { mutableStateOf("") }
-    var isLoading by remember { mutableStateOf(false) }
+    var inputNumber by rememberSaveable { mutableStateOf("") }
+    var error by rememberSaveable { mutableStateOf("") }
+    var isLoading by rememberSaveable { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val numberFactFlow by mainViewModel.getNumberFact
@@ -40,10 +40,11 @@ fun MainScreen(
             .padding(all = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        OutlinedTextField(
+        FactTextField(
             modifier = Modifier.padding(top = 30.dp),
             value = inputNumber,
             onValueChange = {
+                error = ""
                 inputNumber = it
             },
             label = { Text(text = "Enter number") },
@@ -54,7 +55,7 @@ fun MainScreen(
                 keyboardController?.hide()
                 mainViewModel.getNumberFact(inputNumber)
             }),
-            isError = error.isNotEmpty()
+            error = error
         )
 
         Spacer(modifier = Modifier.size(10.dp))
@@ -87,7 +88,6 @@ fun MainScreen(
 
         LaunchedEffect("collect") {
             numberFactFlow.collect { state ->
-                println(state)
                 when (state) {
                     is State.Error -> {
                         isLoading = false
