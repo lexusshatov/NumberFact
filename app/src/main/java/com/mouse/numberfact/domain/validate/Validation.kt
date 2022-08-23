@@ -1,4 +1,4 @@
-package com.mouse.numberfact.domain
+package com.mouse.numberfact.domain.validate
 
 interface Validation<T> {
     fun validate(value: T): Result
@@ -10,6 +10,6 @@ interface Validation<T> {
     }
 }
 
-class EmptyValidation <T>: Validation<T> {
+class EmptyValidation<T> : Validation<T> {
     override fun validate(value: T) = Validation.Result()
 }

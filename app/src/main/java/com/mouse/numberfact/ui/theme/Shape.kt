@@ -1,4 +1,4 @@
-package com.mouse.numberfact.theme
+package com.mouse.numberfact.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

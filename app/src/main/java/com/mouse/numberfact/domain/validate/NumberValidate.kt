@@ -1,4 +1,4 @@
-package com.mouse.numberfact.domain
+package com.mouse.numberfact.domain.validate
 
 import android.content.res.Resources
 import androidx.core.text.isDigitsOnly

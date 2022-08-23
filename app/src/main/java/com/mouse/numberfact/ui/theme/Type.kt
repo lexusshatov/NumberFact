@@ -1,4 +1,4 @@
-package com.mouse.numberfact.theme
+package com.mouse.numberfact.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

@@ -1,6 +1,10 @@
-package com.mouse.numberfact.domain
+package com.mouse.numberfact.domain.interaction
 
 import android.util.Log
+import com.mouse.numberfact.domain.State
+import com.mouse.numberfact.domain.Void
+import com.mouse.numberfact.domain.validate.EmptyValidation
+import com.mouse.numberfact.domain.validate.Validation
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -48,3 +52,5 @@ interface Interaction<in Params, out Result : Any> {
         abstract suspend fun process(params: Params): Result
     }
 }
+
+operator fun Interaction<Void, *>.invoke(): Unit = invoke(Void)

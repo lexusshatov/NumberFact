@@ -1,6 +1,8 @@
-package com.mouse.numberfact.domain
+package com.mouse.numberfact.domain.interaction
 
 import com.mouse.numberfact.NumberFactApp
+import com.mouse.numberfact.domain.NumberApi
+import com.mouse.numberfact.domain.validate.NumberValidate
 import kotlinx.coroutines.CoroutineScope
 
 class GetNumberFactInteraction(

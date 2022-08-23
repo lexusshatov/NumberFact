@@ -19,7 +19,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mouse.numberfact.MainViewModel
-import com.mouse.numberfact.domain.State
+import com.mouse.numberfact.domain.Void
+import com.mouse.numberfact.domain.collectState
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -33,6 +34,7 @@ fun MainScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val numberFactFlow by mainViewModel.getNumberFact
+    val randomFactFlow by mainViewModel.getRandomFact
 
     Column(
         modifier = Modifier
@@ -72,7 +74,7 @@ fun MainScreen(
         }
         FactButton(
             modifier = Modifier.padding(horizontal = 60.dp),
-            onClick = { mainViewModel.loadRandomNumber() },
+            onClick = { mainViewModel.getRandomFact(Void) },
             isLoading = isLoading
         ) {
             Text(text = "Get fact about random number", textAlign = TextAlign.Center)
@@ -86,18 +88,19 @@ fun MainScreen(
             }
         }
 
-        LaunchedEffect("collect") {
-            numberFactFlow.collect { state ->
-                when (state) {
-                    is State.Error -> {
-                        isLoading = false
-                        error = state.message
-                    }
-                    State.Idle -> isLoading = false
-                    State.Loading -> isLoading = true
-                    is State.Success -> onNavigateToDetail(state.result)
-                }
-            }
+        LaunchedEffect("collect_number_fact") {
+            numberFactFlow.collectState(
+                onLoading = { isLoading = it },
+                onError = { error = it },
+                onSuccess = onNavigateToDetail
+            )
+        }
+        LaunchedEffect("collect_random_fact") {
+            randomFactFlow.collectState(
+                onLoading = { isLoading = it },
+                onError = { error = it },
+                onSuccess = onNavigateToDetail
+            )
         }
     }
 }
