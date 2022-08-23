@@ -9,3 +9,7 @@ interface Validation<T> {
         val success: Boolean = errors.isEmpty()
     }
 }
+
+class EmptyValidation <T>: Validation<T> {
+    override fun validate(value: T) = Validation.Result()
+}

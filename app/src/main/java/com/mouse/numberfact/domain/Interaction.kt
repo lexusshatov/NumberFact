@@ -13,6 +13,7 @@ interface Interaction<in Params, out Result : Any> {
     abstract class Base<in Params, out Result : Any>(
         private val scope: CoroutineScope,
         private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
+        private val validation: Validation<Params> = EmptyValidation(),
     ) : Interaction<Params, Result> {
 
         private val mutableState: MutableSharedFlow<State<Result>> =
@@ -26,16 +27,19 @@ interface Interaction<in Params, out Result : Any> {
         override fun invoke(params: Params) {
             job?.cancel()
             job = scope.launch(coroutineDispatcher) {
-                try {
-                    mutableState.emit(State.Loading)
-                    val result = process(params)
-                    mutableState.emit(State.Success(result))
-                } catch (error: CancellationException) {
-                    Log.i("Network", "Coroutine cancelled: ${this@Base}")
-                } catch (error: Exception) {
-                    val message = error.localizedMessage.ifEmpty { "Something went wrong!" }
-                    mutableState.emit(State.Error(message))
-                }
+                val validationResult = validation.validate(params)
+                if (validationResult.success) {
+                    try {
+                        mutableState.emit(State.Loading)
+                        val result = process(params)
+                        mutableState.emit(State.Success(result))
+                    } catch (error: CancellationException) {
+                        Log.i("Network", "Coroutine cancelled: ${this@Base}")
+                    } catch (error: Exception) {
+                        val message = error.localizedMessage.ifEmpty { "Something went wrong!" }
+                        mutableState.emit(State.Error(message))
+                    }
+                } else mutableState.emit(State.Error(validationResult.errors.joinToString("\n")))
                 mutableState.emit(State.Idle)
                 job = null
             }
