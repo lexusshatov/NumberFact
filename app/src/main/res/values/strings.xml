@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">NumberFact</string>
+    <string name="input_your_number_please">Input your number, please!</string>
+    <string name="you_should_input_number">You should input number!</string>
 </resources>

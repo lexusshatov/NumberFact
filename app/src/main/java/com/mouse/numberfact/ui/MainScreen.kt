@@ -20,17 +20,19 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mouse.numberfact.MainViewModel
 import com.mouse.numberfact.domain.State
-import kotlinx.coroutines.flow.collect
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    onNavigateToDetail: (String) -> Unit = {},
+) {
     val mainViewModel: MainViewModel = viewModel()
     var inputNumber by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val numberFactFlow by mainViewModel.getNumberFact
-    val numberFactState by numberFactFlow.collectAsState(initial = State.Idle)
 
     Column(
         modifier = Modifier
@@ -51,7 +53,8 @@ fun MainScreen() {
             keyboardActions = KeyboardActions(onSearch = {
                 keyboardController?.hide()
                 mainViewModel.getNumberFact(inputNumber)
-            })
+            }),
+            isError = error.isNotEmpty()
         )
 
         Spacer(modifier = Modifier.size(10.dp))
@@ -62,14 +65,14 @@ fun MainScreen() {
                 keyboardController?.hide()
                 mainViewModel.getNumberFact(inputNumber)
             },
-            state = numberFactState
+            isLoading = isLoading
         ) {
             Text(text = "Get fact", textAlign = TextAlign.Center)
         }
         FactButton(
             modifier = Modifier.padding(horizontal = 60.dp),
             onClick = { mainViewModel.loadRandomNumber() },
-            state = numberFactState
+            isLoading = isLoading
         ) {
             Text(text = "Get fact about random number", textAlign = TextAlign.Center)
         }
@@ -82,9 +85,18 @@ fun MainScreen() {
             }
         }
 
-        LaunchedEffect(key1 = "Test") {
-            numberFactFlow.collect() {
-                println(it)
+        LaunchedEffect("collect") {
+            numberFactFlow.collect { state ->
+                println(state)
+                when (state) {
+                    is State.Error -> {
+                        isLoading = false
+                        error = state.message
+                    }
+                    State.Idle -> isLoading = false
+                    State.Loading -> isLoading = true
+                    is State.Success -> onNavigateToDetail(state.result)
+                }
             }
         }
     }

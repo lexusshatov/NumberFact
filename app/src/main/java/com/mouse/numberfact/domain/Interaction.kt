@@ -3,7 +3,7 @@ package com.mouse.numberfact.domain
 import android.util.Log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlin.reflect.KProperty
 
 interface Interaction<in Params, out Result : Any> {
@@ -15,7 +15,8 @@ interface Interaction<in Params, out Result : Any> {
         private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
     ) : Interaction<Params, Result> {
 
-        private val mutableState: MutableStateFlow<State<Result>> = MutableStateFlow(State.Idle)
+        private val mutableState: MutableSharedFlow<State<Result>> =
+            MutableSharedFlow(replay = 1, extraBufferCapacity = 10)
         private var job: Job? = null
 
         override fun getValue(thisRef: Any?, property: KProperty<*>): Flow<State<Result>> {
