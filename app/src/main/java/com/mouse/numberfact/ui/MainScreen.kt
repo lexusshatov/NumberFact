@@ -2,8 +2,10 @@ package com.mouse.numberfact.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -34,6 +36,10 @@ fun MainScreen(
 
     val numberFactFlow by mainViewModel.getNumberFact
     val randomFactFlow by mainViewModel.getRandomFact
+
+    val list = generateSequence {
+        NumberFact("${(-10000..10000).random()} is some fact about this number with long description")
+    }.take(100).toList()
 
     Column(
         modifier = Modifier
@@ -79,10 +85,16 @@ fun MainScreen(
         }
 
         Spacer(modifier = Modifier.size(20.dp))
+        Text(text = "Recently searched")
+        Spacer(modifier = Modifier.size(10.dp))
 
         LazyColumn {
-            items(100) {
-                FactPreview(text = (0..100).random().toString())
+            itemsIndexed(list) { index, fact ->
+                FactPreview(fact, onNavigateToDetail)
+                if (index < list.lastIndex) {
+                    Spacer(modifier = Modifier.size(3.dp))
+                    Divider()
+                }
             }
         }
 
@@ -101,12 +113,4 @@ fun MainScreen(
             )
         }
     }
-}
-
-@Composable
-fun FactPreview(text: String) {
-    Text(
-        modifier = Modifier.fillMaxWidth(),
-        text = text
-    )
 }
