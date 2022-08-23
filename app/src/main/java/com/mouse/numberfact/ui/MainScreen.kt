@@ -10,22 +10,21 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mouse.numberfact.MainViewModel
+import com.mouse.numberfact.data.NumberFact
 import com.mouse.numberfact.domain.Void
 import com.mouse.numberfact.domain.collectState
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun MainScreen(
-    onNavigateToDetail: (String) -> Unit = {},
+    onNavigateToDetail: (NumberFact) -> Unit = {},
 ) {
     val mainViewModel: MainViewModel = viewModel()
     var inputNumber by rememberSaveable { mutableStateOf("") }
@@ -50,7 +49,6 @@ fun MainScreen(
                 inputNumber = it
             },
             label = { Text(text = "Enter number") },
-            textStyle = TextStyle.Default.copy(color = Color.White),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword,
                 imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(onSearch = {
